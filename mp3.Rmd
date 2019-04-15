@@ -27,18 +27,20 @@ macleish_layers %>%
   pluck("trails") %>%
   st_length()
 
-trails <- macleish_layers %>%
+trail_lengths <- macleish_layers %>%
   pluck("trails") %>%
   mutate(computed_length = st_length(geometry))
 
-macleish_layers %>%
-  pluck("boundary") %>%
-  st_area()
+pal <- colorNumeric(
+  palette = "viridis",
+  domain = macleish_layers$trail_lengths
+)
 
 leaflet() %>%
   addTiles() %>%
   addPolylines(data = pluck(macleish_layers, "trails"), color = "red") %>%
-  addPolygons(data = macleish_layers[["boundary"]], color = "black", fillOpacity = 0.01, group = "Boundaries") 
+  addPolygons(data = macleish_layers[["boundary"]], color = "black", fillOpacity = 0) %>%
+  addPolylines(data = macleish_layers[["contours_30ft"]], color = "blue", weight = 0.75)
 
 ```
 
