@@ -1,6 +1,6 @@
 ---
-title: "mp3"
-author: Olivia Demeo and Lilly Farah
+title: "SDS 192: Mini-Project 3"
+author: Olivia DeMeo and Lilly Farah
 date: 4/16/19
 output:
   html_document:
@@ -12,15 +12,33 @@ output:
 
 library(sf)
 library(tidyverse)
-devtools::install_github("beanumber/macleish")
+library(leaflet)
+library(macleish)
+
 
 ```
 
-##
+##Problem:
+### "MacLeish has approximately four miles of built trail for use by field station visitors. We would like to be able to classify these trails as “Easy,” “Moderate,” or “Difficult” based on their length and change in elevation."
 
 ```{r, message = FALSE, echo = TRUE}
 
+macleish_layers %>%
+  pluck("trails") %>%
+  st_length()
 
+trails <- macleish_layers %>%
+  pluck("trails") %>%
+  mutate(computed_length = st_length(geometry))
+
+macleish_layers %>%
+  pluck("boundary") %>%
+  st_area()
+
+leaflet() %>%
+  addTiles() %>%
+  addPolylines(data = pluck(macleish_layers, "trails"), color = "red") %>%
+  addPolygons(data = macleish_layers[["boundary"]], color = "black", fillOpacity = 0.01, group = "Boundaries") 
 
 ```
 
