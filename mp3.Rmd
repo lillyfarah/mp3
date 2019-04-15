@@ -31,16 +31,22 @@ trail_lengths <- macleish_layers %>%
   pluck("trails") %>%
   mutate(computed_length = st_length(geometry))
 
-pal <- colorNumeric(
-  palette = "viridis",
-  domain = macleish_layers$trail_lengths
+x <- st_intersection(
+  pluck(macleish_layers, "trails"), 
+  pluck(macleish_layers, "contours_30ft")
 )
+western <- filter(x, name == "Western Loop")
+western_pts <- western %>% 
+  st_cast("MULTIPOINT") %>% 
+  st_cast("POINT")
+nrow(western_pts)
 
 leaflet() %>%
   addTiles() %>%
   addPolylines(data = pluck(macleish_layers, "trails"), color = "red") %>%
   addPolygons(data = macleish_layers[["boundary"]], color = "black", fillOpacity = 0) %>%
-  addPolylines(data = macleish_layers[["contours_30ft"]], color = "blue", weight = 0.75)
+  addPolylines(data = macleish_layers[["contours_30ft"]], color = "blue", weight = 0.75) %>%
+  addMarkers(data = western_pts, popup = ~name)
 
 ```
 
