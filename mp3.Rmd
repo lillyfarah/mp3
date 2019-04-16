@@ -31,15 +31,18 @@ trail_lengths <- macleish_layers %>%
   pluck("trails") %>%
   mutate(computed_length = st_length(geometry))
 
-x <- st_intersection(
+x <- function (trail_name) {
+  st_intersection(
   pluck(macleish_layers, "trails"), 
   pluck(macleish_layers, "contours_30ft")
 )
-western <- filter(x, name == "Western Loop")
-western_pts <- western %>% 
+trail_pts <- filter(x, name = trail_name)
+all_pts<- trail_pts %>% 
   st_cast("MULTIPOINT") %>% 
   st_cast("POINT")
-nrow(western_pts)
+nrow(all_pts) }
+
+all_ints <- map(macleish_layers, x)
 
 leaflet() %>%
   addTiles() %>%
