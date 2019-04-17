@@ -31,26 +31,46 @@ trail_lengths <- macleish_layers %>%
   pluck("trails") %>%
   mutate(computed_length = st_length(geometry))
 
-x <- function (trail_name) {
-  st_intersection(
+x <- st_intersection(
   pluck(macleish_layers, "trails"), 
   pluck(macleish_layers, "contours_30ft")
 )
-trail_pts <- filter(x, name = trail_name)
-all_pts<- trail_pts %>% 
+western <- filter(x, name == "Western Loop")
+western_pts <- western %>% 
   st_cast("MULTIPOINT") %>% 
   st_cast("POINT")
-nrow(all_pts) }
 
-all_ints <- map(macleish_layers, x)
+
+porc <- filter(x, name == "Porcupine Trail")
+porc_pts <- porc %>% 
+  st_cast("MULTIPOINT") %>% 
+  st_cast("POINT")
+
+poplar <- filter(x, name == "Poplar Hill Road")
+poplar_pts <- poplar %>% 
+  st_cast("MULTIPOINT") %>% 
+  st_cast("POINT")
+
+eastern <- filter(x, name == "Eastern Loop")
+eastern_pts <- eastern %>% 
+  st_cast("MULTIPOINT") %>% 
+  st_cast("POINT")
+
+vernal <- filter(x, name == "Vernal Pool Loop")
+vernal_pts <- vernal %>% 
+  st_cast("MULTIPOINT") %>% 
+  st_cast("POINT")
 
 leaflet() %>%
   addTiles() %>%
   addPolylines(data = pluck(macleish_layers, "trails"), color = "red") %>%
   addPolygons(data = macleish_layers[["boundary"]], color = "black", fillOpacity = 0) %>%
   addPolylines(data = macleish_layers[["contours_30ft"]], color = "blue", weight = 0.75) %>%
-  addMarkers(data = western_pts, popup = ~name)
+  addMarkers(data = western_pts) %>%
+  addMarkers(data = porc_pts)%>%
+  addMarkers(data = poplar_pts)%>%
+  addMarkers(data = eastern_pts)%>%
+  addMarkers(data = vernal_pts)
 
 ```
-
 
